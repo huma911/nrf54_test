@@ -57,6 +57,28 @@
 		};
 	};
 
+	uart136_default: uart136_default {
+		group1 {
+			psels = <NRF_PSEL(UART_TX, 2, 4)>,
+				<NRF_PSEL(UART_RTS, 2, 0)>;
+		};
+		group2 {
+			psels = <NRF_PSEL(UART_RX, 2, 5)>,
+				<NRF_PSEL(UART_CTS, 2, 6)>;
+			bias-pull-up;
+		};
+	};
+
+	uart136_sleep: uart136_sleep {
+		group1 {
+			psels = <NRF_PSEL(UART_TX, 2, 4)>,
+				<NRF_PSEL(UART_RX, 2, 5)>,
+				<NRF_PSEL(UART_RTS, 2, 0)>,
+				<NRF_PSEL(UART_CTS, 2, 6)>;
+			low-power-enable;
+		};
+	};
+
 	i2c130_default: i2c130_default {
 		group1 {
 			psels = <NRF_PSEL(TWIM_SDA, 0, 6)>,
@@ -71,6 +93,31 @@
 			low-power-enable;
 		};
 	};
+
+	spi131_default: spi131_default {
+		group1 {
+			psels = <NRF_PSEL(SPIM_SCK, 0, 1)>,
+				<NRF_PSEL(SPIM_MOSI, 0, 7)>,
+				<NRF_PSEL(SPIM_MISO, 0, 8)>;
+		};
+	};
+
+	spi131_sleep: spi131_sleep {
+		group1 {
+			psels = <NRF_PSEL(SPIM_SCK, 0, 1)>,
+				<NRF_PSEL(SPIM_MOSI, 0, 7)>,
+				<NRF_PSEL(SPIM_MISO, 0, 8)>;
+			low-power-enable;
+		};
+	};
+
+	spi120_default: spi120_default {
+		group1 {
+			psels = <NRF_PSEL(SPIM_MISO, 6, 7)>,
+					<NRF_PSEL(SPIM_MOSI, 6, 8)>,
+					<NRF_PSEL(SPIM_SCK, 6, 1)>;
+		};
+	};
 };
 &i2c130 {
 	status = "okay";
@@ -83,4 +130,43 @@
         status = "okay";
         reg = < 0x4a >;
     };
+};
+
+&spi131 {
+	status = "okay";
+	pinctrl-0 = <&spi131_default>;
+	pinctrl-1 = <&spi131_sleep>;
+	pinctrl-names = "default", "sleep";
+	cs-gpios = <&gpio0 9 GPIO_ACTIVE_LOW>;
+	memory-regions = <&ram3x_cpuapp>;
+
+	mydevice: mydevice@0{
+        compatible = "cirrus,cs47l63";
+		spi-max-frequency = < 0x7a1200 >;
+        status = "okay";
+        reg = < 0x00 >;
+    };
+};
+
+&spi120 {
+	status = "okay";
+	pinctrl-0 = <&spi120_default>;
+	pinctrl-names = "default";
+	cs-gpios = <&gpio6 5 GPIO_ACTIVE_LOW>;
+	memory-regions = <&ram3x_cpuapp>;
+
+	myscreen: myscreen@0{
+        compatible = "cirrus,cs47l63";
+		spi-max-frequency = < 0x1e84800 >;
+        status = "okay";
+        reg = < 0x00 >;
+    };
+};
+
+&gpio0 {
+	status = "okay";
+};
+
+&gpio6 {
+	status = "okay";
 };
